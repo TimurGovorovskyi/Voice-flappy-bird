@@ -56,7 +56,7 @@ with sd.InputStream(samplerate=fs, channels=1, blocksize=block, callback=audio_c
         y_vel += gravity
         player.y += int(y_vel)
 
-        window.fill(0, 0, 160)
+        window.fill((0, 0, 160))
         draw.rect(window, (255, 0, 0), player)
 
         for pipe in pipes[:]:
