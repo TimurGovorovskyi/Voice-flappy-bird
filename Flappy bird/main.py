@@ -33,3 +33,47 @@ def generate_pipes(count, pipe_width=140, gap=280, min_height=50, max_height=440
         pipes.extend([top_pipe, bottom_pipe])
         start_x += distance
     return pipes
+
+pipes = generate_pipes(5)
+font1 = font.Font(None, 100)
+score = 0
+lose = False
+wait = 40
+
+y_vel = 0.0
+gravity = 0.6
+THRESH = 0.001
+IMPULSE = -0.8
+
+with sd.InputStream(samplerate=fs, channels=1, blocksize=block, callback=audio_cb):
+    while True:
+        for e in event.get():
+            if e.type == QUIT:
+                quit()
+
+        if mic_level > THRESH:
+            y_vel = IMPULSE
+        y_vel += gravity
+        player.y += int(y_vel)
+
+        window.fill(0, 0, 160)
+        draw.rect(window, (255, 0, 0), player)
+
+        for pipe in pipes[:]:
+            if not lose:
+                pipe.x -= 10
+                draw.rect(window, (0, 255, 0), pipe)
+                if pipe.x < -100:
+                    pipes.remove(pipe)
+                    score += 0.5
+                if player.colliderect(pipe):
+                    lose = True
+
+        if len(pipes) < 0:
+            pipes += generate_pipes(150)
+
+        score_text = font1.render(str(score), True, (255, 255, 255))
+        window.blit(score_text, (window_size[0]//2 - score_text.get_rect().w//2, 40))
+
+        display.update()
+        clock.tick(60)
