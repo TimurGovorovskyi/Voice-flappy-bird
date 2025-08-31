@@ -77,3 +77,19 @@ with sd.InputStream(samplerate=fs, channels=1, blocksize=block, callback=audio_c
 
         display.update()
         clock.tick(60)
+
+        if player.bottom > window_size[1]:
+            player.bottom = window_size[1]
+            y_vel = 0.0
+        if player.top < 0:
+            player.top = 0
+            if y_vel < 0:
+                y_vel = 0
+
+        if lose and wait > 1:
+            for pipe in pipes[:]:
+                pipe.x += 8
+            wait -= 1
+        else:
+            lose = False
+            wait = 40
